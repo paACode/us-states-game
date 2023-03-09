@@ -3,12 +3,12 @@ import pandas
 from os.path import exists as file_exists
 
 
-def get_us_state_information(selected_state):
+def get_selected_state_information(selected_state):
     """Returns a Dataframe with Index, State, X-Coordinate and Y-Coordinate of selected State"""
     return map_data[map_data.state.str.title() == selected_state]
 
 
-def correct_us_state(information):
+def us_state_exists(information):
     if information.empty:
         return False
     return True
@@ -53,14 +53,15 @@ if __name__ == '__main__':
 
     while game_is_on:
         answer_state = screen.textinput(title=f"Score {score}/50", prompt="Wat is another states name?").title()
-        state_information = get_us_state_information(selected_state=answer_state)
+        state_information = get_selected_state_information(selected_state=answer_state)
         if answer_state == "exit".title():
             game_is_on = False
             guessed_states.to_csv("guessed_states.csv")
-        elif correct_us_state(information=state_information):
-            guessed_states = pandas.concat([guessed_states, map_data[map_data.state == answer_state]])
+        elif us_state_exists(information=state_information):
+            guessed_states = pandas.concat([guessed_states, state_information])
             add_state_label(information=state_information)
             score = len(guessed_states)
             if score >= 50:
                 write_success_message()
                 game_is_on = False
+    turtle.mainloop()
